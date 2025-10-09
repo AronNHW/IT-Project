@@ -8,7 +8,7 @@
     <ul>
       <li>
         <a href="{{ route('pengurus.dashboard') }}" class="{{ request()->routeIs('pengurus.dashboard') ? 'active' : '' }}">
-          <i class="fas fa-home-alt nav-icon"></i><span class="menu-text"> Dasbor</span>
+          <i class="fas fa-home-alt nav-icon"></i><span class="menu-text"> Dashboard </span>
         </a>
       </li>
 

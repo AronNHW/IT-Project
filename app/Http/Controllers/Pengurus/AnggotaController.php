@@ -16,14 +16,6 @@ class AnggotaController extends Controller
         return view('pengurus.calon-anggota.index', compact('candidates'));
     }
 
-    public function destroy($id)
-    {
-        $candidate = Pendaftaran::findOrFail($id);
-        $candidate->delete();
-
-        return redirect()->route('pengurus.calon-anggota.index')->with('success', 'Calon anggota berhasil dihapus.');
-    }
-
 
     public function calonAnggotaTahap1()
     {
@@ -92,5 +84,25 @@ class AnggotaController extends Controller
                                 ->paginate(10);
         $semua_divisi = Divisi::all();
         return view('pengurus.kelola-anggota-himati.index', compact('members', 'divisi', 'semua_divisi'));
+    }
+
+    public function update(Request $request, Pendaftaran $anggotum)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'nim' => 'required|string|max:255',
+            'hp' => 'required|string|max:255',
+            'divisi_id' => 'required|exists:divisis,id',
+        ]);
+
+        $anggotum->update($request->only(['name', 'nim', 'hp', 'divisi_id']));
+
+        return redirect()->route('pengurus.kelola-anggota-himati.index')->with('success', 'Data anggota berhasil diperbarui.');
+    }
+
+    public function destroy(Pendaftaran $anggotum)
+    {
+        $anggotum->delete();
+        return redirect()->route('pengurus.kelola-anggota-himati.index')->with('success', 'Anggota berhasil dihapus.');
     }
 }

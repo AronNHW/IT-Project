@@ -55,7 +55,7 @@ Route::prefix('pengurus')->name('pengurus.')->group(function () {
   Route::resource('prestasi', PrestasiController::class);
   Route::resource('divisi', PengurusDivisiController::class);
 
-        Route::resource('anggota', AnggotaController::class);
+        Route::resource('anggota', AnggotaController::class)->except(['create', 'store', 'edit']);
         Route::get('calon-anggota', [AnggotaController::class, 'calonAnggota'])->name('calon-anggota.index');
         Route::post('calon-anggota/{pendaftaran}/approve', [AnggotaController::class, 'approveCandidate'])->name('calon-anggota.approve');
         Route::post('calon-anggota/{pendaftaran}/reject', [AnggotaController::class, 'rejectCandidate'])->name('calon-anggota.reject');

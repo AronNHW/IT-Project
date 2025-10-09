@@ -151,7 +151,6 @@
         <h2>Konfirmasi Hapus</h2>
         <p>Apakah Anda yakin ingin menghapus data anggota ini?</p>
         <div class="modal-footer">
-            <button type="button" class="btn delete-close" style="background-color: #f3f4f6;">Batal</button>
             <button type="button" id="confirmDeleteBtn" class="btn btn-red">Hapus</button>
         </div>
     </div>
