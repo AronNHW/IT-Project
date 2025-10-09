@@ -87,6 +87,7 @@
 #divisi-admin-page .custom-modal-content{background-color:#fefefe;margin:10% auto;padding:20px;border:1px solid #888;width:80%;max-width:600px;border-radius:8px;position:relative}
 #divisi-admin-page .custom-modal-close{color:#aaa;float:right;font-size:28px;font-weight:bold;cursor:pointer}
 #divisi-admin-page .modal-footer-buttons{text-align:right;margin-top:20px;}
+#divisi-admin-page .modal-footer-buttons button{margin-left:10px;padding:8px 15px;border-radius:6px;cursor:pointer;border:none;font-weight:500;}
 #divisi-admin-page .btn-danger{background-color:#dc3545;color:white;}
 </style>
 @endpush
