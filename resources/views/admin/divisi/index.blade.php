@@ -37,7 +37,7 @@
                             @endif
                         </td>
                         <td>{{ $divisi->nama_divisi }}</td>
-                        <td style="max-width:320px">{{ Str::limit($divisi->deskripsi, 60) }}</td>
+                        <td style="max-width:320px">{!! Str::limit($divisi->deskripsi, 60) !!}</td>
                         <td>
                             <a href="{{ route('admin.divisi.show', $divisi) }}" class="btn-blue">Lihat</a>
                             <a href="{{ route('admin.divisi.edit', $divisi) }}" class="btn-yellow">Edit</a>

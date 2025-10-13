@@ -3,28 +3,26 @@
 @section('title', 'Divisi')
 
 @section('content')
-    <div class="container">
-        <div style="display: flex; justify-content: center;" class="mb-4">
-            <img src="{{ asset('assets/image/logo_hima.png') }}" alt="Logo HIMA" style="max-width: 150px;">
-        </div>
-        <h1 class="page-title">Divisi Himpunan Mahasiswa Teknologi Informasi</h1>
+    <div style="display: flex; justify-content: center;" class="mb-4">
+        <img src="{{ asset('assets/image/logo_hima.png') }}" alt="Logo HIMA" style="max-width: 150px;">
+    </div>
+    <h1 class="page-title">Divisi Himpunan Mahasiswa Teknologi Informasi</h1>
 
-        <div class="divisi-grid">
-            @forelse ($divisis as $divisi)
-                <div class="divisi-card">
-                    @if($divisi->photo_divisi)
-                        <img src="{{ Storage::url($divisi->photo_divisi) }}" alt="{{ $divisi->nama_divisi }}" class="card-img">
-                    @endif
-                    <div class="card-body">
-                        <h2 class="card-title">{{ $divisi->nama_divisi }}</h2>
-                        <p class="card-text">{{ Str::limit($divisi->deskripsi, 100) }}</p>
-                        <a href="{{ route('user.divisi.show', $divisi) }}" class="btn-read-more">Baca Selengkapnya</a>
-                    </div>
+    <div class="divisi-grid">
+        @forelse ($divisis as $divisi)
+            <div class="divisi-card">
+                @if($divisi->photo_divisi)
+                    <img src="{{ Storage::url($divisi->photo_divisi) }}" alt="{{ $divisi->nama_divisi }}" class="card-img">
+                @endif
+                <div class="card-body">
+                    <h2 class="card-title">{{ $divisi->nama_divisi }}</h2>
+                    <p class="card-text">{{ Str::limit($divisi->deskripsi, 100) }}</p>
+                    <a href="{{ route('user.divisi.show', $divisi) }}" class="btn-read-more">Baca Selengkapnya</a>
                 </div>
-            @empty
-                <p>Belum ada data divisi.</p>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <p>Belum ada data divisi.</p>
+        @endforelse
     </div>
 @endsection
 

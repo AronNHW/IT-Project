@@ -27,34 +27,11 @@
     #calon-anggota-page .btn-lihat { background: #3b82f6; color: #fff; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 600; border: 0; cursor: pointer; }
     #calon-anggota-page .btn-hapus { background: #ef4444; color: #fff; padding: 6px 10px; border-radius: 6px; border: 0; font-weight: 600; cursor: pointer; }
 
-    .status-badge {
-        display: inline-block;
-        padding: 0.4em 0.8em;
-        font-size: 0.85em;
-        font-weight: 700;
-        line-height: 1;
-        text-align: center;
-        white-space: nowrap;
-        vertical-align: baseline;
-        border-radius: 0.375rem;
-    }
+    .status-badge { display: inline-block; padding: 0.4em 0.8em; font-size: 0.85em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.375rem; }
+    .status-pending { color: #212529; background-color: #ffc107; }
+    .status-diterima { color: #fff; background-color: #28a745; }
+    .status-ditolak { color: #fff; background-color: #dc3545; }
 
-    .status-pending {
-        color: #212529;
-        background-color: #ffc107; /* Orange for pending */
-    }
-
-    .status-approved {
-        color: #fff;
-        background-color: #28a745; /* Green for approved */
-    }
-
-    .status-rejected {
-        color: #fff;
-        background-color: #dc3545; /* Red for rejected */
-    }
-
-    /* Custom Modal Styles */
     #calon-anggota-page .custom-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.5); }
     #calon-anggota-page .custom-modal-content { background-color: #fefefe; margin: 5% auto; padding: 24px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 12px; position: relative; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
     #calon-anggota-page .custom-modal-close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
@@ -78,6 +55,11 @@
             {{ session('success') }}
         </div>
     @endif
+    @if(session('warning'))
+        <div class="alert alert-warning" style="background-color: #fffbeb; color: #b45309; padding: 1rem; border-radius: 0.375rem; margin-bottom: 1.5rem;">
+            {{ session('warning') }}
+        </div>
+    @endif
 
     <section class="data-table-container">
         <table class="table data-table">
@@ -97,17 +79,16 @@
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->nim ?? 'N/A' }}</td>
                         <td>{{ $candidate->hp ?? 'N/A' }}</td>
-                        <td>{{ $candidate->divisi }}</td>
+                        <td>{{ $candidate->divisi->nama_divisi ?? 'N/A' }}</td>
                         <td>
-                            <span class="status-badge status-pending">
-                                Menunggu
+                            <span class="status-badge status-{{ strtolower($candidate->status) ?: 'pending' }}">
+                                {{ $candidate->status ?? 'Menunggu' }}
                             </span>
                         </td>
                         <td class="action-btns">
                             <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}'>Lihat</button>
                             <form action="{{ route('pengurus.calon-anggota.destroy', $candidate->id) }}" method="POST" class="delete-form" style="display:inline">
-                                @csrf
-                                @method('DELETE')
+                                @csrf @method('DELETE')
                                 <button type="button" class="btn-hapus">Hapus</button>
                             </form>
                         </td>
@@ -121,7 +102,7 @@
         </table>
     </section>
 
-    <!-- Modals -->
+    <!-- View Modal -->
     <div id="viewModal" class="custom-modal">
         <div class="custom-modal-content">
             <span class="custom-modal-close">&times;</span>
@@ -131,15 +112,15 @@
                 <div class="candidate-info"><strong>NIM:</strong> <span id="view_nim"></span></div>
                 <div class="candidate-info"><strong>Nomor HP:</strong> <span id="view_hp"></span></div>
                 <div class="candidate-info"><strong>Divisi Tujuan:</strong> <span id="view_divisi"></span></div>
-                <div class="candidate-info"><strong>Alasan Bergabung:</strong> <span id="view_alasan_bergabung"></span></div>
+                <div class="candidate-info"><strong>Alasan:</strong> <span id="view_alasan_bergabung"></span></div>
                 <div class="candidate-info"><strong>Status:</strong> <span id="view_status"></span></div>
             </div>
             <div class="modal-footer-buttons">
-                <form id="approveForm" method="POST" style="display:inline;">
+                <form id="approveForm" method="POST" style="display:inline;" onsubmit="return confirm('Anda yakin ingin MENERIMA calon ini? Notifikasi WA akan dikirim.');">
                     @csrf
                     <button type="submit" class="btn-success">Terima</button>
                 </form>
-                <form id="rejectForm" method="POST" style="display:inline;">
+                <form id="rejectForm" method="POST" style="display:inline;" onsubmit="return confirm('Anda yakin ingin MENOLAK calon ini? Notifikasi WA akan dikirim.');">
                     @csrf
                     <button type="submit" class="btn-danger">Tolak</button>
                 </form>
@@ -147,6 +128,7 @@
         </div>
     </div>
 
+    <!-- Delete Modal -->
     <div id="deleteModal" class="custom-modal">
         <div class="custom-modal-content" style="max-width: 400px;">
             <span class="custom-modal-close">&times;</span>
@@ -169,21 +151,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const viewModal = page.querySelector('#viewModal');
     const deleteModal = page.querySelector('#deleteModal');
     const modals = [viewModal, deleteModal];
-
     let formToSubmit = null;
 
-    // Open Modals
+    // Open View Modal
     page.querySelectorAll('.btn-lihat').forEach(btn => {
         btn.addEventListener('click', () => {
             const data = JSON.parse(btn.dataset.candidate);
             page.querySelector('#view_name').textContent = data.name;
             page.querySelector('#view_nim').textContent = data.nim;
             page.querySelector('#view_hp').textContent = data.hp;
-            page.querySelector('#view_divisi').textContent = data.divisi;
+            page.querySelector('#view_divisi').textContent = data.divisi ? data.divisi.nama_divisi : 'N/A';
             page.querySelector('#view_alasan_bergabung').textContent = data.alasan_bergabung;
             page.querySelector('#view_status').textContent = data.status;
 
-            // Set form actions for approve/reject
             const approveForm = page.querySelector('#approveForm');
             const rejectForm = page.querySelector('#rejectForm');
             approveForm.action = `/pengurus/calon-anggota/${data.id}/approve`;
@@ -193,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Open Delete Modal
     page.querySelectorAll('.btn-hapus').forEach(btn => {
         btn.addEventListener('click', () => {
             formToSubmit = btn.closest('.delete-form');
@@ -200,9 +181,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Confirm Delete
+    // Confirm Delete Action
     page.querySelector('#confirmDeleteBtn').addEventListener('click', () => {
-        if (formToSubmit) formToSubmit.submit();
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
     });
 
     // Close Modal Logic

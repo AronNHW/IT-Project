@@ -18,12 +18,34 @@ use App\Http\Controllers\Pengurus\AnggotaController;
 use App\Http\Controllers\Pengurus\DivisiController as PengurusDivisiController;
 use App\Http\Controllers\UserPendaftaranController;
 use App\Http\Controllers\UserDivisiController;
+use App\Http\Controllers\Admin\PengaduanController as AdminPengaduanController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Pengurus\UserController as PengurusUserController;
 use App\Http\Controllers\GoogleController;
 
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// --- AWAL PENAMBAHAN ROUTE OTENTIKASI ---
+
+// Route untuk menampilkan halaman login
+Route::get('/login', [App\Http\Controllers\AuthController::class, 'showLoginForm'])->name('login');
+
+// Route untuk memproses data login
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'login']);
+
+// Route untuk menampilkan halaman registrasi
+Route::get('/register', [App\Http\Controllers\AuthController::class, 'showRegistrationForm'])->name('register');
+
+// Route untuk memproses data registrasi
+Route::post('/register', [App\Http\Controllers\AuthController::class, 'register']);
+
+// Route untuk logout
+Route::post('/logout', [App\Http\Controllers\AuthController::class, 'logout'])->name('logout');
+
+// --- AKHIR PENAMBAHAN ROUTE OTENTIKASI ---
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -33,7 +55,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('prestasi', AdminPrestasiController::class);
     Route::resource('anggota', AdminAnggotaController::class);
     Route::resource('divisi', DivisiController::class);
-    Route::view('/mahasiswa-bermasalah', 'admin.bermasalah.index')->name('mahasiswa-bermasalah');
+    Route::resource('users', AdminUserController::class);
+    Route::resource('mahasiswa-bermasalah', AdminPengaduanController::class)->except([]);
 
     Route::get('/kelola-anggota-himati', [AdminAnggotaController::class, 'kelolaAnggotaHimati'])->name('kelola-anggota-himati.index');
     Route::get('/anggota-per-divisi/{divisi}', [AdminAnggotaController::class, 'anggotaPerDivisi'])->name('anggota.per.divisi');
@@ -44,8 +67,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/calon-anggota-tahap-2', [AdminAnggotaController::class, 'calonAnggotaTahap2'])->name('calon-anggota-tahap-2.index');
     Route::post('calon-anggota/{pendaftaran}/pass-interview', [AdminAnggotaController::class, 'passInterview'])->name('calon-anggota.pass-interview');
     Route::post('calon-anggota/{pendaftaran}/fail-interview', [AdminAnggotaController::class, 'failInterview'])->name('calon-anggota.fail-interview');
-    Route::delete('/calon-anggota/{id}', [AdminAnggotaController::class, 'destroy'])->name('calon-anggota.destroy');
-});
+    Route::delete('/calon-anggota/{anggotum}', [AdminAnggotaController::class, 'destroy'])->name('calon-anggota.destroy');
+})
+;
 
 Route::prefix('pengurus')->name('pengurus.')->group(function () {
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -54,20 +78,21 @@ Route::prefix('pengurus')->name('pengurus.')->group(function () {
   Route::resource('berita', BeritaController::class);
   Route::resource('prestasi', PrestasiController::class);
   Route::resource('divisi', PengurusDivisiController::class);
+  Route::resource('users', PengurusUserController::class);
 
         Route::resource('anggota', AnggotaController::class)->except(['create', 'store', 'edit']);
         Route::get('calon-anggota', [AnggotaController::class, 'calonAnggota'])->name('calon-anggota.index');
         Route::post('calon-anggota/{pendaftaran}/approve', [AnggotaController::class, 'approveCandidate'])->name('calon-anggota.approve');
         Route::post('calon-anggota/{pendaftaran}/reject', [AnggotaController::class, 'rejectCandidate'])->name('calon-anggota.reject');
-        Route::get('calon-anggota-tahap-1', [AnggotaController::class, 'calonAnggotaTahap1'])->name('calon-anggota-tahap-1.index');
-        Route::get('calon-anggota-tahap-2', [AnggotaController::class, 'calonAnggotaTahap2'])->name('calon-anggota-tahap-2.index');
-        Route::post('calon-anggota/{pendaftaran}/approve-stage-2', [AnggotaController::class, 'approveCandidateStage2'])->name('calon-anggota.approve-stage-2');
-        Route::post('calon-anggota/{pendaftaran}/reject-stage-2', [AnggotaController::class, 'rejectCandidateStage2'])->name('calon-anggota.reject-stage-2');
-        Route::post('calon-anggota/{pendaftaran}/pass-interview', [AnggotaController::class, 'passInterview'])->name('calon-anggota.pass-interview');
+        Route::get('calon-anggota-tahap-1', [AdminAnggotaController::class, 'calonAnggotaTahap1'])->name('calon-anggota-tahap-1.index');
+        Route::get('calon-anggota-tahap-2', [AdminAnggotaController::class, 'calonAnggotaTahap2'])->name('calon-anggota-tahap-2.index');
+        Route::post('calon-anggota/{pendaftaran}/approve-stage-2', [AdminAnggotaController::class, 'approveCandidateStage2'])->name('calon-anggota.approve-stage-2');
+        Route::post('calon-anggota/{pendaftaran}/reject-stage-2', [AdminAnggotaController::class, 'rejectCandidateStage2'])->name('calon-anggota.reject-stage-2');
+        Route::post('calon-anggota/{pendaftaran}/pass-interview', [AdminAnggotaController::class, 'passInterview'])->name('calon-anggota.pass-interview');
         Route::get('kelola-anggota-himati', [AnggotaController::class, 'kelolaAnggotaHimati'])->name('kelola-anggota-himati.index');
         Route::get('anggota-per-divisi/{divisi}', [AnggotaController::class, 'anggotaPerDivisi'])->name('anggota.per.divisi');
 
-  Route::delete('/calon-anggota/{id}', [AnggotaController::class, 'destroy'])->name('calon-anggota.destroy');
+  Route::delete('/calon-anggota/{anggotum}', [AnggotaController::class, 'destroy'])->name('calon-anggota.destroy');
 
 
 });
@@ -85,6 +110,8 @@ Route::prefix('user')->name('user.')->group(function () {
     Route::get('/prestasi', [UserPrestasiController::class, 'index'])->name('prestasi');
     Route::view('/aspirasi', 'user.aspirasi')->name('aspirasi');
     Route::post('/aspirasi', [AspirasiUserController::class, 'store'])->name('aspirasi.store');
+    Route::view('/bermasalah', 'user.bermasalah')->name('bermasalah');
+    Route::post('/bermasalah', [PengaduanController::class, 'store'])->name('bermasalah.store');
 });
 
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);

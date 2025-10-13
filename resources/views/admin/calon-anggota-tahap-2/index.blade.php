@@ -67,7 +67,7 @@
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->nim ?? 'N/A' }}</td>
                         <td>{{ $candidate->hp ?? 'N/A' }}</td>
-                        <td>{{ $candidate->divisi }}</td>
+                        <td>{{ $candidate->divisi->nama_divisi ?? 'N/A' }}</td>
                         <td>
                             <span class="status-badge status-pending">
                                 Menunggu Wawancara
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             page.querySelector('#view_name').textContent = data.name;
             page.querySelector('#view_nim').textContent = data.nim;
             page.querySelector('#view_hp').textContent = data.hp;
-            page.querySelector('#view_divisi').textContent = data.divisi;
+            page.querySelector('#view_divisi').textContent = data.divisi ? data.divisi.nama_divisi : 'N/A';
             page.querySelector('#view_alasan_bergabung').textContent = data.alasan_bergabung;
             page.querySelector('#view_status').textContent = data.status;
 

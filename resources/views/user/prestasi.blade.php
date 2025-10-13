@@ -1,7 +1,6 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="container">
     <h1 class="my-4">Data Prestasi Mahasiswa</h1>
 
     <!-- Filter and Search Form -->
@@ -70,5 +69,4 @@
             {{ $prestasis->links() }}
         </div>
     </div>
-</div>
 @endsection

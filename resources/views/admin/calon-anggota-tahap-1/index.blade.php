@@ -39,19 +39,24 @@
         border-radius: 0.375rem;
     }
 
-    .status-pending {
-        color: #212529;
-        background-color: #ffc107; /* Orange for pending */
+    .status-diterima {
+        color: #fff;
+        background-color: #28a745; /* Green */
     }
 
-    .status-approved {
+    .status-ditolak {
         color: #fff;
-        background-color: #28a745; /* Green for approved */
+        background-color: #dc3545; /* Red */
     }
 
-    .status-rejected {
+    .status-gagal-wawancara {
         color: #fff;
-        background-color: #dc3545; /* Red for rejected */
+        background-color: #6c757d; /* Gray */
+    }
+
+    .status-lulus-wawancara {
+        color: #fff;
+        background-color: #17a2b8; /* Info Blue */
     }
 
     /* Custom Modal Styles */
@@ -82,12 +87,42 @@
     #calon-anggota-page .modal-footer-buttons button { margin-left: 10px; padding: 10px 18px; border-radius: 8px; cursor: pointer; border: none; font-weight: 600; }
     #calon-anggota-page .btn-danger { background-color: var(--danger-color); color: white; }
     #calon-anggota-page .btn-success { background-color: #28a745; color: white; }
+
+    .filter-bar { display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center; }
+    .filter-bar input, .filter-bar select { padding: 0.5rem 1rem; border-radius: 0.375rem; border: 1px solid var(--border-color); }
+    .btn { padding: 0.5rem 1rem; border-radius: 0.375rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; border: none; cursor: pointer; }
+    .btn-primary { background-color: var(--primary-color); color: #fff; }
+    .btn-secondary { background-color: #6c757d; color: #fff; }
 </style>
 @endpush
 
 @section('content')
 <div id="calon-anggota-page">
     <h1>Data Calon Anggota Tahap 1 Hima-TI</h1>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <form action="{{ route('admin.calon-anggota-tahap-1.index') }}" method="GET" class="d-flex gap-3">
+            <input type="text" name="search" placeholder="Cari Nama atau NIM..." value="{{ request('search') }}">
+            
+            <select name="divisi_id">
+                <option value="">Semua Divisi</option>
+                @foreach($divisis as $divisi)
+                    <option value="{{ $divisi->id }}" {{ request('divisi_id') == $divisi->id ? 'selected' : '' }}>{{ $divisi->nama_divisi }}</option>
+                @endforeach
+            </select>
+
+            <select name="status">
+                <option value="">Semua Status</option>
+                @foreach($statuses as $key => $value)
+                    <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $value }}</option>
+                @endforeach
+            </select>
+
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ route('admin.calon-anggota-tahap-1.index') }}" class="btn btn-secondary">Reset</a>
+        </form>
+    </div>
 
     <section class="data-table-container">
         <table class="table data-table">
@@ -107,20 +142,19 @@
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->nim ?? 'N/A' }}</td>
                         <td>{{ $candidate->hp ?? 'N/A' }}</td>
-                        <td>{{ $candidate->divisi }}</td>
+                        <td>{{ $candidate->divisi->nama_divisi ?? 'N/A' }}</td>
                         <td>
-                            <span class="status-badge @if($candidate->status == 'Approved Stage 1') status-approved @elseif($candidate->status == 'Rejected Stage 1') status-rejected @else status-pending @endif">
-                                @if($candidate->status == 'Approved Stage 1')
-                                    Diterima Tahap 1
-                                @elseif($candidate->status == 'Rejected Stage 1')
-                                    Ditolak Tahap 1
-                                @else
-                                    {{ $candidate->status }}
-                                @endif
+                            <span class="status-badge 
+                                @if($candidate->status == 'diterima') status-diterima
+                                @elseif($candidate->status == 'ditolak') status-ditolak
+                                @elseif($candidate->status == 'Gagal Wawancara') status-gagal-wawancara
+                                @elseif($candidate->status == 'Lulus Wawancara') status-lulus-wawancara
+                                @endif">
+                                {{ $statuses[$candidate->status] ?? $candidate->status }}
                             </span>
                         </td>
                         <td class="action-btns">
-                            <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}'>Lihat</button>
+                            <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}' data-divisi='{{ $candidate->divisi->nama_divisi ?? "N/A" }}' data-status='{{ $statuses[$candidate->status] ?? $candidate->status }}'>Lihat</button>
                         </td>
                     </tr>
                 @empty
@@ -131,6 +165,10 @@
             </tbody>
         </table>
     </section>
+
+    <div class="mt-4">
+        {{ $candidates->links() }}
+    </div>
 
     <!-- Modals -->
     <div id="viewModal" class="custom-modal">
@@ -145,6 +183,24 @@
                 <div class="candidate-info"><strong>Alasan Bergabung</strong> <span id="view_alasan_bergabung"></span></div>
                 <div class="candidate-info"><strong>Status</strong> <span id="view_status"></span></div>
             </div>
+            <div class="modal-footer-buttons">
+                 <button type="button" class="btn btn-danger" id="deleteButtonFromModal">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteModal" class="custom-modal">
+        <div class="custom-modal-content" style="max-width: 400px;">
+            <h3 style="text-align: center;">Konfirmasi Hapus</h3>
+            <p style="text-align: center; margin-top: 1rem;">Apakah Anda yakin ingin menghapus data calon anggota ini?</p>
+            <div class="modal-footer-buttons" style="justify-content: center; margin-top: 1.5rem;">
+                <button type="button" class="btn btn-secondary" id="cancelDelete">Batal</button>
+                <form id="confirmDeleteForm" method="POST" action="">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Hapus</button>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -158,27 +214,48 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!page) return;
 
     const viewModal = page.querySelector('#viewModal');
-    const modals = [viewModal];
+    const deleteModal = page.querySelector('#deleteModal');
+    const modals = [viewModal, deleteModal];
+    let currentCandidateId = null;
 
-    // Open Modals
+    // Open View Modal
     page.querySelectorAll('.btn-lihat').forEach(btn => {
         btn.addEventListener('click', () => {
             const data = JSON.parse(btn.dataset.candidate);
+            currentCandidateId = data.id;
             page.querySelector('#view_name').textContent = data.name;
             page.querySelector('#view_nim').textContent = data.nim;
             page.querySelector('#view_hp').textContent = data.hp;
-            page.querySelector('#view_divisi').textContent = data.divisi;
-            page.querySelector('#view_alasan_bergabung').textContent = data.alasan_bergabung;
-            page.querySelector('#view_status').textContent = data.status;
+            page.querySelector('#view_divisi').textContent = btn.dataset.divisi;
+            page.querySelector('#view_alasan_bergabung').textContent = data.alasan;
+            page.querySelector('#view_status').textContent = btn.dataset.status;
 
             viewModal.style.display = 'block';
         });
     });
 
+    // Open Delete Modal from View Modal
+    const deleteButtonFromModal = page.querySelector('#deleteButtonFromModal');
+    if(deleteButtonFromModal) {
+        deleteButtonFromModal.addEventListener('click', () => {
+            if (currentCandidateId) {
+                const form = document.getElementById('confirmDeleteForm');
+                const action = "{{ route('admin.calon-anggota.destroy', ':id') }}".replace(':id', currentCandidateId);
+                form.action = action;
+                viewModal.style.display = 'none';
+                deleteModal.style.display = 'block';
+            }
+        });
+    }
+
     // Close Modal Logic
     page.querySelectorAll('.custom-modal-close').forEach(btn => {
         btn.addEventListener('click', () => modals.forEach(m => m.style.display = 'none'));
     });
+    const cancelDeleteBtn = page.querySelector('#cancelDelete');
+    if(cancelDeleteBtn) {
+        cancelDeleteBtn.addEventListener('click', () => deleteModal.style.display = 'none');
+    }
 
     window.addEventListener('click', (event) => {
         modals.forEach(m => {

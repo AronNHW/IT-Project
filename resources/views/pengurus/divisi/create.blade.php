@@ -46,3 +46,9 @@
 }
 </style>
 @endpush
+
+@push('scripts')
+<script>
+    CKEDITOR.replace('deskripsi');
+</script>
+@endpush

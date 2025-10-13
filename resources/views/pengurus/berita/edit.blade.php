@@ -51,3 +51,9 @@
 .btn-submit {background-color: #eab308; color: #fff; padding: 12px 20px; border: 0; border-radius: 8px; font-weight: 600; cursor: pointer;}
 </style>
 @endpush
+
+@push('scripts')
+<script>
+    CKEDITOR.replace('deskripsi');
+</script>
+@endpush

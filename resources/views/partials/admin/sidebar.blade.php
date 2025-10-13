@@ -14,7 +14,7 @@
 
       <li class="nav-title">Admin</li>
 
-      <li><a href="#"><i class="fas fa-user nav-icon"></i><span class="menu-text"> Data Pengguna</span></a></li>
+      <li><a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active' : '' }}"><i class="fas fa-user nav-icon"></i><span class="menu-text"> Data Pengguna</span></a></li>
       <li>
         <details {{ request()->routeIs(['admin.kelola-anggota-himati.index', 'admin.calon-anggota.index', 'admin.calon-anggota-tahap-1.index', 'admin.calon-anggota-tahap-2.index']) ? 'open' : '' }}>
           <summary><i class="fas fa-users nav-icon"></i><span class="menu-text">Data Anggota Hima-TI</span><i class="fas fa-chevron-down arrow-icon"></i></summary>
@@ -38,7 +38,7 @@
         </details>
       </li>
       <li><a href="{{ route('admin.prestasi.index') }}" class="{{ request()->routeIs('admin.prestasi.*') ? 'active' : '' }}"><i class="fas fa-trophy nav-icon"></i><span class="menu-text"> Data Prestasi Mahasiswa </span></a></li>
-      <li><a href="{{ route('admin.mahasiswa-bermasalah') }}" class="{{ request()->routeIs('admin.mahasiswa-bermasalah') ? 'active' : '' }}"><i class="fas fa-exclamation-triangle nav-icon"></i><span class="menu-text">Data Mahasiswa Bermasalah</span></a></li>
+      <li><a href="{{ route('admin.mahasiswa-bermasalah.index') }}" class="{{ request()->routeIs('admin.mahasiswa-bermasalah.index') ? 'active' : '' }}"><i class="fas fa-exclamation-triangle nav-icon"></i><span class="menu-text">Data Mahasiswa Bermasalah</span></a></li>
       <li><a href="{{ route('admin.berita.index') }}" class="{{ request()->routeIs('admin.berita.*') ? 'active' : '' }}"><i class="fas fa-newspaper nav-icon"></i><span class="menu-text"> Data Berita</span></a></li>
       <li><a href="{{ route('admin.aspirasi.index') }}" class="{{ request()->routeIs('admin.aspirasi.*') ? 'active' : '' }}"><i class="fas fa-bullhorn nav-icon"></i><span class="menu-text"> Data Aspirasi</span></a></li>
       <li><a href="#"><i class="fas fa-cog nav-icon"></i><span class="menu-text"> Pengaturan </span><i class="fas fa-chevron-down arrow-icon"></i></a></li>

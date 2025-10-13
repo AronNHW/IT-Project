@@ -22,7 +22,7 @@
             <hr class="berita-divider">
             <div class="berita-deskripsi">
                 <strong class="info-label">Isi Berita:</strong>
-                <p>{!! nl2br(e($berita->deskripsi)) !!}</p>
+                <p>{!! $berita->deskripsi !!}</p>
             </div>
         </div>
         <div class="card-footer">
@@ -58,9 +58,11 @@
     text-align: center;
 }
 .berita-card .berita-foto img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
+    width: 100%;
+    max-height: 550px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 24px;
 }
 .berita-card .berita-info {
     display: flex;

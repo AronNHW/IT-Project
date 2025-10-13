@@ -3,15 +3,13 @@
 @section('title', $divisi->nama_divisi)
 
 @section('content')
-    <div class="container">
-        <div class="divisi-detail">
-            <h1 class="divisi-title">{{ $divisi->nama_divisi }}</h1>
-            @if($divisi->photo_divisi)
-                <img src="{{ Storage::url($divisi->photo_divisi) }}" alt="{{ $divisi->nama_divisi }}" class="divisi-img">
-            @endif
-            <div class="divisi-content">
-                <p>{{ $divisi->deskripsi }}</p>
-            </div>
+    <div class="divisi-detail">
+        <h1 class="divisi-title">{{ $divisi->nama_divisi }}</h1>
+        @if($divisi->photo_divisi)
+            <img src="{{ Storage::url($divisi->photo_divisi) }}" alt="{{ $divisi->nama_divisi }}" class="divisi-img">
+        @endif
+        <div class="divisi-content">
+            <p>{{ $divisi->deskripsi }}</p>
         </div>
     </div>
 @endsection

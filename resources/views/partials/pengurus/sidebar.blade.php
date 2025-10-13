@@ -14,7 +14,7 @@
 
       <li class="nav-title">Pengurus</li>
 
-      <li><a href="#"><i class="fas fa-user nav-icon"></i><span class="menu-text"> Data Pengguna</span></a></li>
+      <li><a href="{{ route('pengurus.users.index') }}" class="{{ request()->routeIs('pengurus.users.*') ? 'active' : '' }}"><i class="fas fa-user nav-icon"></i><span class="menu-text"> Data Pengguna</span></a></li>
       <li>
         <details {{ request()->routeIs(['pengurus.kelola-anggota-himati.index', 'pengurus.calon-anggota.index', 'pengurus.calon-anggota-tahap-1.index', 'pengurus.calon-anggota-tahap-2.index']) ? 'open' : '' }}>
           <summary><i class="fas fa-users nav-icon"></i><span class="menu-text">Data Anggota Hima-TI</span><i class="fas fa-chevron-down arrow-icon"></i></summary>

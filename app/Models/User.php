@@ -21,13 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'no_wa',
+        'role', // Tambahkan 'role' ke fillable
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -42,7 +39,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'password' => 'string', // Pastikan password tidak di-hash otomatis
         ];
     }
 }

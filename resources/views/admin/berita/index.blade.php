@@ -31,7 +31,7 @@
                     <tr>
                         <td><img src="{{ asset('storage/' . $berita->foto_berita) }}" alt="Foto Berita" width="100"></td>
                         <td>{{ $berita->judul_berita }}</td>
-                        <td style="max-width:320px">{{ Str::limit($berita->deskripsi, 60) }}</td>
+                        <td style="max-width:320px">{{ Str::limit(strip_tags(html_entity_decode($berita->deskripsi)), 60) }}</td>
                         <td>{{ $berita->created_at->format('d M Y H:i') }}</td>
                         <td>
                             <div style="display: flex; gap: 6px;">
