@@ -24,3 +24,33 @@
         </form>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const prestasiSelect = document.getElementById('prestasi_select');
+    const prestasiText = document.getElementById('prestasi_text');
+    const prestasiHidden = document.getElementById('prestasi_hidden');
+
+    function togglePrestasiText() {
+        if (prestasiSelect.value === 'Lainnya') {
+            prestasiText.style.display = 'block';
+            prestasiHidden.value = prestasiText.value;
+        } else {
+            prestasiText.style.display = 'none';
+            prestasiHidden.value = prestasiSelect.value;
+        }
+    }
+
+    prestasiSelect.addEventListener('change', togglePrestasiText);
+    prestasiText.addEventListener('input', function() {
+        if (prestasiSelect.value === 'Lainnya') {
+            prestasiHidden.value = this.value;
+        }
+    });
+
+    // Set initial state on page load
+    togglePrestasiText();
+});
+</script>
+@endpush

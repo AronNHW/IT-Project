@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Divisi;
+use App\Models\Setting;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,8 +22,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        View::composer(['partials.admin.sidebar', 'partials.pengurus.sidebar'], function ($view) {
+        View::composer('*', function ($view) {
             $view->with('semua_divisi', Divisi::all());
+            $view->with('logo', Setting::where('key', 'logo')->first());
         });
     }
 }

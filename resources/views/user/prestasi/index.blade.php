@@ -47,7 +47,7 @@
                 <tr>
                     <th>NIM</th>
                     <th>Nama Mahasiswa</th>
-                    <th>Program Studi</th>
+                    <th>IPK</th>
                     <th>Nama Kegiatan</th>
                     <th>Waktu</th>
                     <th>Tingkat</th>
@@ -61,7 +61,7 @@
                     <tr>
                         <td>{{ $prestasi->nim }}</td>
                         <td>{{ $prestasi->nama_mahasiswa }}</td>
-                        <td>{{ $prestasi->program_studi }}</td>
+                        <td>{{ number_format($prestasi->ipk, 2) }}</td>
                         <td>{{ $prestasi->nama_kegiatan }}</td>
                         <td>{{ \Carbon\Carbon::parse($prestasi->waktu_penyelenggaraan)->translatedFormat('d F Y') }}</td>
                         <td>{{ $prestasi->tingkat_kegiatan }}</td>

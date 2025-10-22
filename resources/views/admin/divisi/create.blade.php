@@ -17,8 +17,8 @@
             <textarea id="deskripsi" name="deskripsi" class="form-control" rows="5" required></textarea>
         </div>
         <div class="form-group">
-            <label for="photo_divisi">Photo Divisi</label>
-            <input type="file" id="photo_divisi" name="photo_divisi" class="form-control">
+            <label for="photo_divisi">Photo Divisi <span style="color: red;">*</span></label>
+            <input type="file" id="photo_divisi" name="photo_divisi" class="form-control" required>
         </div>
         <button type="submit" class="btn btn-primary">Simpan</button>
     </form>

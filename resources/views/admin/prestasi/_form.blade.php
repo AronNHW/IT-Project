@@ -12,10 +12,12 @@
 </div>
 
 <div class="form-group">
-    <label for="program_studi">Program Studi</label>
-    <input type="text" name="program_studi" id="program_studi" value="{{ old('program_studi', $prestasi->program_studi ?? '') }}" required>
-    @error('program_studi') <div class="error-message">{{ $message }}</div> @enderror
+    <label for="ipk">IPK</label>
+    <input type="number" name="ipk" id="ipk" value="{{ old('ipk', $prestasi->ipk ?? '') }}" step="0.01" min="0" max="4" required>
+    @error('ipk') <div class="error-message">{{ $message }}</div> @enderror
 </div>
+
+
 
 <div class="form-group">
     <label for="nama_kegiatan">Nama Kegiatan</label>
@@ -41,8 +43,19 @@
 </div>
 
 <div class="form-group">
-    <label for="prestasi_yang_dicapai">Prestasi yang Dicapai</label>
-    <input type="text" name="prestasi_yang_dicapai" id="prestasi_yang_dicapai" value="{{ old('prestasi_yang_dicapai', $prestasi->prestasi_yang_dicapai ?? '') }}" required>
+    <label for="prestasi_select">Prestasi yang Dicapai</label>
+    <select id="prestasi_select" class="form-control">
+        @php
+            $prestasiValue = old('prestasi_yang_dicapai', $prestasi->prestasi_yang_dicapai ?? '');
+            $options = ['Juara 1', 'Juara 2', 'Juara 3'];
+        @endphp
+        <option value="Juara 1" @if($prestasiValue == 'Juara 1') selected @endif>Juara 1</option>
+        <option value="Juara 2" @if($prestasiValue == 'Juara 2') selected @endif>Juara 2</option>
+        <option value="Juara 3" @if($prestasiValue == 'Juara 3') selected @endif>Juara 3</option>
+        <option value="Lainnya" @if(!in_array($prestasiValue, $options) && $prestasiValue != '') selected @endif>Lainnya</option>
+    </select>
+    <input type="text" id="prestasi_text" class="form-control mt-2" style="display: none;" value="{{ $prestasiValue }}">
+    <input type="hidden" name="prestasi_yang_dicapai" id="prestasi_hidden" value="{{ $prestasiValue }}">
     @error('prestasi_yang_dicapai') <div class="error-message">{{ $message }}</div> @enderror
 </div>
 

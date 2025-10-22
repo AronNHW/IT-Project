@@ -9,7 +9,7 @@
             <img src="{{ Storage::url($divisi->photo_divisi) }}" alt="{{ $divisi->nama_divisi }}" class="divisi-img">
         @endif
         <div class="divisi-content">
-            <p>{{ $divisi->deskripsi }}</p>
+            {!! $divisi->deskripsi !!}
         </div>
     </div>
 @endsection

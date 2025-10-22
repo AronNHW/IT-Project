@@ -18,16 +18,16 @@
     #calon-anggota-page h1 { font-size: 1.875rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.5rem; }
     #calon-anggota-page .data-table-container { background-color: #fff; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); overflow: hidden; }
     #calon-anggota-page .data-table { width: 100%; border-collapse: collapse; }
-    #calon-anggota-page .data-table th, #calon-anggota-page .data-table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    #calon-anggota-page .data-table th, #calon-anggota-page .data-table td { padding: 1rem 1.5rem; text-align: left; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
     #calon-anggota-page .data-table thead th { background-color: var(--light-gray); font-weight: 600; color: var(--text-light); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; }
     #calon-anggota-page .data-table tbody tr:hover { background-color: #F9FAFB; }
     #calon-anggota-page .data-table td { color: var(--text-dark); }
     #calon-anggota-page .data-table .empty-row td { text-align: center; padding: 3rem; color: var(--text-light); }
-    #calon-anggota-page .action-btns { display: flex; gap: 0.5rem; }
+    #calon-anggota-page .action-btns { display: flex; gap: 0.5rem; align-items: center; }
     #calon-anggota-page .btn-lihat { background: #3b82f6; color: #fff; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 600; border: 0; cursor: pointer; }
     #calon-anggota-page .btn-hapus { background: #ef4444; color: #fff; padding: 6px 10px; border-radius: 6px; border: 0; font-weight: 600; cursor: pointer; }
 
-    .status-badge { display: inline-block; padding: 0.4em 0.8em; font-size: 0.85em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: baseline; border-radius: 0.375rem; }
+    .status-badge { display: inline-block; padding: 0.4em 0.8em; font-size: 0.85em; font-weight: 700; line-height: 1; text-align: center; white-space: nowrap; vertical-align: middle; border-radius: 0.375rem; }
     .status-pending { color: #212529; background-color: #ffc107; }
     .status-diterima { color: #fff; background-color: #28a745; }
     .status-ditolak { color: #fff; background-color: #dc3545; }
@@ -65,6 +65,7 @@
         <table class="table data-table">
             <thead>
                 <tr>
+                    <th>Foto</th>
                     <th>Nama Lengkap</th>
                     <th>NIM</th>
                     <th>Nomor HP</th>
@@ -76,6 +77,15 @@
             <tbody>
                 @forelse ($candidates as $candidate)
                     <tr>
+                        <td>
+                            @if($candidate->gambar)
+                                <img src="{{ asset('storage/' . $candidate->gambar) }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                            @else
+                                <div style="width: 50px; height: 50px; background-color: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                    N/A
+                                </div>
+                            @endif
+                        </td>
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->nim ?? 'N/A' }}</td>
                         <td>{{ $candidate->hp ?? 'N/A' }}</td>
@@ -85,17 +95,19 @@
                                 {{ $candidate->status ?? 'Menunggu' }}
                             </span>
                         </td>
-                        <td class="action-btns">
-                            <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}'>Lihat</button>
-                            <form action="{{ route('pengurus.calon-anggota.destroy', $candidate->id) }}" method="POST" class="delete-form" style="display:inline">
-                                @csrf @method('DELETE')
-                                <button type="button" class="btn-hapus">Hapus</button>
-                            </form>
+                        <td>
+                            <div class="action-btns">
+                                <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}'>Lihat</button>
+                                <form action="{{ route('pengurus.calon-anggota.destroy', $candidate->id) }}" method="POST" class="delete-form" style="display:inline">
+                                    @csrf @method('DELETE')
+                                    <button type="button" class="btn-hapus">Hapus</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr class="empty-row">
-                        <td colspan="6" class="text-center">Tidak ada data calon anggota.</td>
+                        <td colspan="7" class="text-center">Tidak ada data calon anggota.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -108,6 +120,9 @@
             <span class="custom-modal-close">&times;</span>
             <h2>Detail Calon Anggota</h2>
             <div class="modal-body-content">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <img id="view_gambar" src="" alt="Foto Calon Anggota" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px; margin: auto;">
+                </div>
                 <div class="candidate-info"><strong>Nama:</strong> <span id="view_name"></span></div>
                 <div class="candidate-info"><strong>NIM:</strong> <span id="view_nim"></span></div>
                 <div class="candidate-info"><strong>Nomor HP:</strong> <span id="view_hp"></span></div>
@@ -157,6 +172,16 @@ document.addEventListener('DOMContentLoaded', function() {
     page.querySelectorAll('.btn-lihat').forEach(btn => {
         btn.addEventListener('click', () => {
             const data = JSON.parse(btn.dataset.candidate);
+
+            const imageView = page.querySelector('#view_gambar');
+            if (data.gambar) {
+                imageView.src = `{{ asset('storage') }}/${data.gambar}`;
+                imageView.style.display = 'block';
+            } else {
+                imageView.src = '';
+                imageView.style.display = 'none';
+            }
+
             page.querySelector('#view_name').textContent = data.name;
             page.querySelector('#view_nim').textContent = data.nim;
             page.querySelector('#view_hp').textContent = data.hp;

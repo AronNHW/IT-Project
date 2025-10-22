@@ -53,6 +53,8 @@
 
 @push('scripts')
 <script>
-    CKEDITOR.replace('deskripsi');
+    document.addEventListener('DOMContentLoaded', function () {
+        CKEDITOR.replace('deskripsi');
+    });
 </script>
 @endpush

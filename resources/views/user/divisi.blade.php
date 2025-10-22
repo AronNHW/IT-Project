@@ -16,7 +16,7 @@
                 @endif
                 <div class="card-body">
                     <h2 class="card-title">{{ $divisi->nama_divisi }}</h2>
-                    <p class="card-text">{{ Str::limit($divisi->deskripsi, 100) }}</p>
+                                                            <p class="card-text">{{ Str::limit(strip_tags(html_entity_decode($divisi->deskripsi)), 100) }}</p>
                     <a href="{{ route('user.divisi.show', $divisi) }}" class="btn-read-more">Baca Selengkapnya</a>
                 </div>
             </div>

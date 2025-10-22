@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HIMA TI Politala</title>
+  <style>
+    :root {
+      --blue: #2d6cdf;
+      --title: #1a40b7;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+
+    h1 {
+      margin: 22px 0 10px;
+      text-align: center;
+      color: var(--title);
+      letter-spacing: .4px;
+    }
+
+    .logo {
+      display: block;
+      margin: 10px auto 20px;
+      max-width: 140px;
+      max-height: 140px;
+    }
+
+    .hero {
+      width: min(1300px, 85%);
+      margin: 0 auto 30px;
+      background: var(--blue);
+      color: #fff;
+      border-radius: 16px;
+      padding: 30px 34px;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    .hero h3 {
+      margin-top: 25px;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .hero ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0 0;
+    }
+
+    .hero ul li::before {
+      content: "• ";
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(4, 1fr);
+      width: min(1300px, 85%);
+      margin: 10px auto 50px;
+    }
+
+    .card {
+      background: var(--blue);
+      color: #fff;
+      border-radius: 12px;
+      padding: 26px 16px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+    }
+
+    .icon {
+      display: block;
+      margin: 0 auto 10px;
+      width: 58px;
+      height: 58px;
+      fill: #fff;
+    }
+
+    @media(max-width:1000px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width:560px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>HIMPUNAN MAHASISWA TEKNOLOGI INFORMASI POLITEKNIK NEGERI TANAH LAUT</h1>
+
+  <img class="logo" src="logo-hima-ti.png" alt="Logo HIMA-TI">
+
+  <div class="hero">
+    <p>
+      Himpunan Mahasiswa Teknologi Informasi (HIMA-TI) Politeknik Negeri Tanah Laut merupakan organisasi kemahasiswaan 
+      yang berperan sebagai wadah pengembangan potensi, kreativitas, dan solidaritas mahasiswa di lingkungan Program Studi Teknologi Informasi.
+    </p>
+
+    <p>
+      Melalui berbagai program kerja, HIMA-TI berkomitmen untuk menciptakan lingkungan akademik yang aktif, kolaboratif, 
+      dan berorientasi pada kemajuan teknologi informasi. Organisasi ini juga menjadi penghubung antara mahasiswa, dosen, 
+      dan pihak kampus dalam mewujudkan visi “Mahasiswa Teknologi Informasi yang Cerdas, Inovatif, dan Berakhlak”.
+    </p>
+
+    <h3>Visi</h3>
+    <p>Menjadikan HIMA-TI sebagai wadah yang aktif, inovatif, dan berkarakter dalam pengembangan potensi mahasiswa Teknologi Informasi.</p>
+
+    <h3>Misi</h3>
+    <ul>
+      <li>Meningkatkan solidaritas dan profesionalisme antaranggota.</li>
+      <li>Mendorong kegiatan yang berorientasi pada pengembangan teknologi dan kreativitas mahasiswa.</li>
+      <li>Mewujudkan komunikasi yang baik antara mahasiswa dan civitas akademika.</li>
+    </ul>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M12 12c2.7 0 8 1.34 8 4v4H4v-4c0-2.66 5.3-4 8-4Zm0-2a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/>
+      </svg>
+      <div style="font-weight:700">Nama Ketua</div>
+      <div>Ketua Umum</div>
+    </div>
+
+    <div class="card">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 2C5.7 13 1 14.2 1 16.5V19h8v-2c0-.68.28-1.3.72-1.72C9.92 14.44 8.95 13 8 13Zm8 0c-.95 0-1.92 1.44-2.72 2.28.44.42.72 1.04.72 1.72V19h8v-2.5c0-2.33-4.67-3.5-7-3.5Z"/>
+      </svg>
+      <div style="font-weight:700">Nama Wakil</div>
+      <div>Wakil Ketua</div>
+    </div>
+
+    <div class="card">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M4 4h16v2H4zm0 4h10v2H4zm0 4h16v2H4zm0 4h10v2H4z"/>
+      </svg>
+      <div style="font-weight:700">Nama Sekretaris</div>
+      <div>Sekretaris Umum</div>
+    </div>
+
+    <div class="card">
+      <svg class="icon" viewBox="0 0 24 24">
+        <path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+      </svg>
+      <div style="font-weight:700">Nama Bendahara</div>
+      <div>Bendahara Umum</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -8,13 +8,14 @@ use App\Models\Pendaftaran;
 use App\Services\FonnteService; // Import FonnteService
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log; // Import Log
+use Illuminate\Support\Facades\Storage;
 
 class AnggotaController extends Controller
 {
 
     public function calonAnggota()
     {
-        $candidates = Pendaftaran::whereNotIn('status', ['diterima', 'ditolak', 'Anggota Aktif', 'Gagal Wawancara'])->get();
+        $candidates = Pendaftaran::whereNotIn('status', ['diterima', 'ditolak', 'Anggota Aktif', 'Gagal Wawancara', 'Lulus Wawancara'])->get();
         return view('admin.calon-anggota.index', compact('candidates'));
     }
 
@@ -68,20 +69,12 @@ class AnggotaController extends Controller
         $pendaftaran->save();
 
         // Kirim notifikasi WhatsApp
-        $message = "Halo, {$pendaftaran->nama}
-Terima kasih telah mendaftar sebagai calon Pengurus HIMA-TI Politeknik Negeri Tanah Laut periode 2025/2026.
-
-Berdasarkan hasil seleksi administrasi, Anda dinyatakan lolos ke tahap wawancara.
-Mohon tetap semangat dan persiapkan diri dengan baik.
-
-Langkah selanjutnya:
-1. Bergabung ke grup informasi seleksi melalui tautan berikut:
-https://chat.whatsapp.com/HRWZs2tMXUP30Cc7x7aS1y?mode=ems_copy_c
-2. Jadwal wawancara dan panduannya akan disampaikan melalui grup tersebut.
-3. Pastikan selalu memantau informasi agar tidak ketinggalan jadwal.
-
-Terima kasih atas antusiasme Anda untuk menjadi bagian dari HIMA-TI Politala.
-– Departemen PSDM HIMA-TI Politala";
+        $template = Storage::disk('local')->get('wa_template_diterima.txt');
+        $message = str_replace(
+            ['{nama}', '{nim}', '{divisi}'],
+            [$pendaftaran->nama, $pendaftaran->nim, $pendaftaran->divisi->nama_divisi],
+            $template
+        );
         $result = $fonnte->send($pendaftaran->hp, $message);
 
         if ($result['ok']) {
@@ -98,17 +91,12 @@ Terima kasih atas antusiasme Anda untuk menjadi bagian dari HIMA-TI Politala.
         $pendaftaran->save();
 
         // Kirim notifikasi WhatsApp
-        $message = "Halo, {$pendaftaran->nama}
-Terima kasih telah mengikuti proses pendaftaran calon Pengurus HIMA-TI Politeknik Negeri Tanah Laut periode 2025/2026.
-
-Berdasarkan hasil seleksi administrasi, saat ini Anda belum dapat melanjutkan ke tahap wawancara.
-Kami sangat menghargai waktu dan antusiasme Anda dalam mengikuti proses ini.
-
-Jangan berkecil hati, masih banyak kesempatan untuk berkontribusi dan terlibat dalam kegiatan HIMA-TI di masa mendatang.
-Kami berharap Anda tetap semangat dan terus aktif mengembangkan diri.
-
-Terima kasih telah menunjukkan minat untuk menjadi bagian dari HIMA-TI Politala.
-– Departemen PSDM HIMA-TI Politala";
+        $template = Storage::disk('local')->get('wa_template_ditolak.txt');
+        $message = str_replace(
+            ['{nama}', '{nim}', '{divisi}'],
+            [$pendaftaran->nama, $pendaftaran->nim, $pendaftaran->divisi->nama_divisi],
+            $template
+        );
         $result = $fonnte->send($pendaftaran->hp, $message);
 
         if ($result['ok']) {

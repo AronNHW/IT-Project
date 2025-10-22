@@ -1,6 +1,6 @@
 <aside class="sidebar">
    <div class="sidebar-header">
-    <img src="{{ asset('assets/image/logo_hima.png') }}" alt="Logo HMTI" class="logo">
+    <img src="{{ $logo ? asset($logo->value) : asset('assets/image/logo_hima.png') }}" alt="Logo HMTI" class="logo">
     <i class="fas fa-bars menu-icon"></i>
 </div>
 
@@ -41,7 +41,15 @@
       <li><a href="{{ route('admin.mahasiswa-bermasalah.index') }}" class="{{ request()->routeIs('admin.mahasiswa-bermasalah.index') ? 'active' : '' }}"><i class="fas fa-exclamation-triangle nav-icon"></i><span class="menu-text">Data Mahasiswa Bermasalah</span></a></li>
       <li><a href="{{ route('admin.berita.index') }}" class="{{ request()->routeIs('admin.berita.*') ? 'active' : '' }}"><i class="fas fa-newspaper nav-icon"></i><span class="menu-text"> Data Berita</span></a></li>
       <li><a href="{{ route('admin.aspirasi.index') }}" class="{{ request()->routeIs('admin.aspirasi.*') ? 'active' : '' }}"><i class="fas fa-bullhorn nav-icon"></i><span class="menu-text"> Data Aspirasi</span></a></li>
-      <li><a href="#"><i class="fas fa-cog nav-icon"></i><span class="menu-text"> Pengaturan </span><i class="fas fa-chevron-down arrow-icon"></i></a></li>
+      <li>
+        <details>
+          <summary><i class="fas fa-cog nav-icon"></i><span class="menu-text"> Pengaturan </span><i class="fas fa-chevron-down arrow-icon"></i></summary>
+          <nav class="items">
+            <a href="{{ route('admin.pengaturan.wa.setting') }}">Kelola Wa Setting</a>
+            <a href="{{ route('admin.setting.index') }}">Pengaturan Website</a>
+          </nav>
+        </details>
+      </li>
     </ul>
   </nav>
 </aside>

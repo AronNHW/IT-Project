@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'no_wa',
         'role', // Tambahkan 'role' ke fillable
+        'avatar',
     ];
 
     protected $hidden = [
@@ -41,5 +42,16 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'string', // Pastikan password tidak di-hash otomatis
         ];
+    }
+
+    protected $appends = ['photo_url'];
+
+    public function getPhotoUrlAttribute()
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+
+        return null;
     }
 }

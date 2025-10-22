@@ -80,10 +80,11 @@
       <div class="profile-dropdown-wrapper">
         <div class="profile-dropdown-toggle">
             <span>Hi, {{ Auth::user()->name ?? 'Admin' }}</span>
-            <img src="https://i.pravatar.cc/150?u={{ Auth::id() }}" alt="User Avatar">
+            <img src="{{ Auth::user()->photo_url ?? 'https://i.pravatar.cc/150?u=' . Auth::id() }}" alt="User Avatar">
         </div>
         <div class="profile-dropdown-menu">
-            <a class="profile-dropdown-item" href="{{ route('user.beranda') }}">Kembali ke Beranda</a>
+            <a class="profile-dropdown-item" href="{{ route('user.beranda') }}">Beranda User</a>
+            <a class="profile-dropdown-item" href="{{ route('user.profil.edit') }}">Pengaturan Profil</a>
             <div class="profile-dropdown-divider"></div>
             <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('Apakah Anda yakin ingin keluar?');">
                 @csrf
@@ -127,12 +128,12 @@
     const sidebar = document.querySelector('.sidebar');
     const mainContent = document.querySelector('.main-content');
 
-    menuIcon.addEventListener('click', function () {
-      sidebar.classList.toggle('collapsed');
-      mainContent.classList.toggle('expanded');
-    });
-
-
+    if (menuIcon) {
+        menuIcon.addEventListener('click', function () {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+        });
+    }
   });
 </script>
 </body>

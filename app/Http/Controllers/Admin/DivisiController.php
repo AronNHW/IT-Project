@@ -25,10 +25,13 @@ class DivisiController extends Controller
         $request->validate([
             'nama_divisi' => 'required|string|max:255',
             'deskripsi' => 'required|string',
-            'photo_divisi' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'photo_divisi' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data = $request->only(['nama_divisi', 'deskripsi']);
+        $data = [
+            'nama_divisi' => $request->nama_divisi,
+            'deskripsi' => $request->deskripsi,
+        ];
 
         if ($request->hasFile('photo_divisi')) {
             $data['photo_divisi'] = $request->file('photo_divisi')->store('divisi', 'public');
@@ -57,7 +60,10 @@ class DivisiController extends Controller
             'photo_divisi' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data = $request->only(['nama_divisi', 'deskripsi']);
+        $data = [
+            'nama_divisi' => $request->nama_divisi,
+            'deskripsi' => $request->deskripsi,
+        ];
 
         if ($request->hasFile('photo_divisi')) {
             if ($divisi->photo_divisi) {

@@ -8,7 +8,7 @@
 .btn-yellow{background:#eab308;color:#fff;padding:6px 10px;border-radius:6px;text-decoration:none;font-weight:600; border: none; cursor: pointer;}
 .btn-red{background:#ef4444;color:#fff;padding:6px 10px;border-radius:6px;border:0;font-weight:600;cursor:pointer}
 .data-table{width:100%;border-collapse:collapse}
-.data-table th,.data-table td{border:1px solid #e5e7eb;padding:8px 12px}
+.data-table th,.data-table td{border:1px solid #e5e7eb;padding:8px 12px; vertical-align: middle;}
 .data-table th{background:#f9fafb}
 .custom-modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,0.5)}
 .custom-modal-content{background-color:#fefefe;margin:10% auto;padding:20px;border:1px solid #888;width:80%;max-width:600px;border-radius:8px;position:relative}
@@ -48,6 +48,7 @@
   <table class="data-table">
     <thead>
       <tr>
+        <th>Photo</th>
         <th>Name</th>
         <th>Email</th>
         <th>No. WA</th>
@@ -58,6 +59,7 @@
     <tbody>
       @forelse ($users as $user)
         <tr>
+          <td><img src="{{ $user->photo_url ?? 'https://i.pravatar.cc/40' }}" alt="Photo" style="width: 40px; height: 40px; border-radius: 50%;"></td>
           <td>{{ $user->name }}</td>
           <td>{{ $user->email }}</td>
           <td>{{ $user->no_wa ?? 'N/A' }}</td>
@@ -72,7 +74,7 @@
         </tr>
       @empty
         <tr>
-          <td colspan="5" style="text-align:center; color:#888; padding:20px;">
+          <td colspan="6" style="text-align:center; color:#888; padding:20px;">
             Belum ada data user
           </td>
         </tr>
@@ -89,7 +91,8 @@
   <div class="custom-modal-content">
     <span class="custom-modal-close">&times;</span>
     <h2>Detail Pengguna</h2>
-    <div style="padding-top:1rem;">
+    <div style="padding-top:1rem; text-align: center;">
+        <img id="view_photo" src="" alt="Photo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 1rem; object-fit: cover;">
         <p><strong>Nama:</strong> <span id="view_name"></span></p>
         <p><strong>Email:</strong> <span id="view_email"></span></p>
         <p><strong>No. WA:</strong> <span id="view_no_wa"></span></p>
@@ -180,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
             fetch(`/admin/users/${userId}`)
                 .then(response => response.json())
                 .then(user => {
+                    document.getElementById('view_photo').src = user.photo_url || 'https://i.pravatar.cc/100';
                     document.getElementById('view_name').textContent = user.name;
                     document.getElementById('view_email').textContent = user.email;
                     document.getElementById('view_no_wa').textContent = user.no_wa || 'N/A';

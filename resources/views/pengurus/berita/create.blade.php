@@ -25,7 +25,7 @@
             </div>
 
             <div class="form-group">
-                <label for="foto_berita">Foto Berita</label>
+                <label for="foto_berita">Foto Berita <span style="color: red;">*</span></label>
                 <input type="file" id="foto_berita" name="foto_berita" accept="image/*" required>
                 @error('foto_berita')
                     <div class="error-message">{{ $message }}</div>

@@ -1,6 +1,6 @@
 <header>
     <!-- Logo -->
-    <img src="{{ asset('assets/image/logo_hima.png') }}" alt="Logo HMTI" class="logo">
+    <img src="{{ $logo ? asset($logo->value) : asset('assets/image/logo_hima.png') }}" alt="Logo HMTI" class="logo">
 
     <nav>
         <ul>
@@ -21,10 +21,15 @@
 
     @auth
         <div class="dropdown">
-            <button class="login-button dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ Str::limit(Auth::user()->name, 10) }} 
+            <button class="login-button dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="display: flex; align-items: center; gap: 8px;">
+                <img src="{{ Auth::user()->photo_url ?? 'https://i.pravatar.cc/30' }}" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%;">
+                <span>{{ Str::limit(Auth::user()->name, 10) }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                <li><a class="dropdown-item" href="{{ route('user.profil.edit') }}">Pengaturan Profil</a></li>
+                @if(Auth::user()->role === 'admin' || Auth::user()->role === 'pengurus')
+                <li><hr class="dropdown-divider"></li>
+                @endif
                 @if(Auth::user()->role === 'admin')
                     <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                 @elseif(Auth::user()->role === 'pengurus')
@@ -34,7 +39,7 @@
                 <li>
                     <form method="POST" action="{{ route('logout') }}" onsubmit="return confirm('Apakah Anda yakin ingin keluar?');">
                         @csrf
-                        <button type="submit" class="dropdown-item">Logout</button
+                        <button type="submit" class="dropdown-item">Logout</button>
                     </form>
                 </li>
             </ul>

@@ -171,3 +171,13 @@ ul{list-style:none}
 .sidebar.collapsed .sidebar-nav details summary .nav-icon {
     margin-right: 0; /* Remove margin for collapsed state */
 }
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    margin-top: .25rem;
+    font-size: .875em;
+}

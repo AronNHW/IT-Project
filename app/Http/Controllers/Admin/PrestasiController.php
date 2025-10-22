@@ -7,6 +7,7 @@ use App\Models\Prestasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PrestasiController extends Controller
 {
@@ -35,14 +36,24 @@ class PrestasiController extends Controller
             $query->where('keterangan', $request->keterangan);
         }
 
-        // Sort
-        $sortBy = $request->get('sort_by', 'waktu_penyelenggaraan');
-        $sortDirection = $request->get('sort_direction', 'desc');
-        if (in_array($sortBy, ['nama_mahasiswa', 'waktu_penyelenggaraan', 'tingkat_kegiatan', 'keterangan']) && in_array($sortDirection, ['asc', 'desc'])) {
-            $query->orderBy($sortBy, $sortDirection);
-        }
+        // Get all matching results
+        $allPrestasis = $query->get();
 
-        $prestasis = $query->paginate(10)->withQueryString();
+        // Sort by SAW score
+        $sortedPrestasis = $allPrestasis->sortByDesc('total_skor');
+
+        // Manual Pagination
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+
+        $prestasis = new LengthAwarePaginator(
+            $sortedPrestasis->slice($offset, $perPage),
+            $sortedPrestasis->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Data for filters
         $tingkat_kegiatans = ['Internal (Kampus)', 'Kabupaten/Kota', 'Provinsi', 'Nasional', 'Internasional'];
@@ -67,9 +78,9 @@ class PrestasiController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'nim' => 'required|string|max:20',
+            'nim' => 'required|numeric',
             'nama_mahasiswa' => 'required|string|max:255',
-            'program_studi' => 'required|string|max:100',
+            'ipk' => 'required|numeric|between:0,4.00',
             'nama_kegiatan' => 'required|string|max:255',
             'waktu_penyelenggaraan' => 'required|date',
             'tingkat_kegiatan' => ['required', Rule::in(['Internal (Kampus)', 'Kabupaten/Kota', 'Provinsi', 'Nasional', 'Internasional'])],
@@ -113,9 +124,9 @@ class PrestasiController extends Controller
     public function update(Request $request, Prestasi $prestasi)
     {
         $validatedData = $request->validate([
-            'nim' => 'required|string|max:20',
+            'nim' => 'required|numeric',
             'nama_mahasiswa' => 'required|string|max:255',
-            'program_studi' => 'required|string|max:100',
+            'ipk' => 'required|numeric|between:0,4.00',
             'nama_kegiatan' => 'required|string|max:255',
             'waktu_penyelenggaraan' => 'required|date',
             'tingkat_kegiatan' => ['required', Rule::in(['Internal (Kampus)', 'Kabupaten/Kota', 'Provinsi', 'Nasional', 'Internasional'])],

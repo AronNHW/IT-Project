@@ -40,7 +40,14 @@
       <li><a href="{{ route('pengurus.prestasi.index') }}" class="{{ request()->routeIs('pengurus.prestasi.*') ? 'active' : '' }}"><i class="fas fa-trophy nav-icon"></i><span class="menu-text"> Data Prestasi Mahasiswa </span></a></li>
       <li><a href="{{ route('pengurus.berita.index') }}" class="{{ request()->routeIs('pengurus.berita.*') ? 'active' : '' }}"><i class="fas fa-newspaper nav-icon"></i><span class="menu-text"> Data Berita</span></a></li>
       <li><a href="{{ route('pengurus.aspirasi.index') }}" class="{{ request()->routeIs('pengurus.aspirasi.*') ? 'active' : '' }}"><i class="fas fa-bullhorn nav-icon"></i><span class="menu-text"> Data Aspirasi</span></a></li>
-      <li><a href="#"><i class="fas fa-cog nav-icon"></i><span class="menu-text"> Pengaturan </span><i class="fas fa-chevron-down arrow-icon"></i></a></li>
+      <li>
+        <details>
+          <summary><i class="fas fa-cog nav-icon"></i><span class="menu-text"> Pengaturan </span><i class="fas fa-chevron-down arrow-icon"></i></summary>
+          <nav class="items">
+            <a href="{{ route('pengurus.pengaturan.wa.setting') }}">Kelola Wa Setting</a>
+          </nav>
+        </details>
+      </li>
     </ul>
   </nav>
 </aside>

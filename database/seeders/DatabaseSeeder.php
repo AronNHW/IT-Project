@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         $this->call(DivisiSeeder::class);
         $this->call(BeritaSeeder::class);
+        $this->call(PrestasiSeeder::class);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

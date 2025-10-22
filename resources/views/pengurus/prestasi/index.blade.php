@@ -69,6 +69,8 @@
                 <tr>
                     <th>NIM</th>
                     <th>Nama Mahasiswa</th>
+                    <th>IPK</th>
+                    <th>Skor</th>
                     <th>Kegiatan</th>
                     <th>Waktu</th>
                     <th>Tingkat</th>
@@ -81,6 +83,8 @@
                     <tr>
                         <td>{{ $prestasi->nim }}</td>
                         <td>{{ $prestasi->nama_mahasiswa }}</td>
+                        <td>{{ number_format($prestasi->ipk, 2) }}</td>
+                        <td>{{ number_format($prestasi->total_skor, 2) }}</td>
                         <td>{{ $prestasi->nama_kegiatan }}</td>
                         <td>{{ \Carbon\Carbon::parse($prestasi->waktu_penyelenggaraan)->translatedFormat('d F Y') }}</td>
                         <td>{{ $prestasi->tingkat_kegiatan }}</td>
@@ -96,7 +100,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="text-center py-5">Tidak ada data prestasi.</td>
+                        <td colspan="9" class="text-center py-5">Tidak ada data prestasi.</td>
                     </tr>
                 @endforelse
             </tbody>

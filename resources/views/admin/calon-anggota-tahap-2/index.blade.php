@@ -53,6 +53,7 @@
         <table class="table data-table">
             <thead>
                 <tr>
+                    <th>Foto</th>
                     <th>Nama Lengkap</th>
                     <th>NIM</th>
                     <th>Nomor HP</th>
@@ -64,6 +65,15 @@
             <tbody>
                 @forelse ($candidates as $candidate)
                     <tr>
+                        <td>
+                            @if($candidate->gambar)
+                                <img src="{{ asset('storage/' . $candidate->gambar) }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                            @else
+                                <div style="width: 50px; height: 50px; background-color: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                    N/A
+                                </div>
+                            @endif
+                        </td>
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->nim ?? 'N/A' }}</td>
                         <td>{{ $candidate->hp ?? 'N/A' }}</td>
@@ -79,7 +89,7 @@
                     </tr>
                 @empty
                     <tr class="empty-row">
-                        <td colspan="6" class="text-center">Tidak ada kandidat yang menunggu wawancara.</td>
+                        <td colspan="7" class="text-center">Tidak ada kandidat yang menunggu wawancara.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -92,6 +102,9 @@
             <span class="custom-modal-close">&times;</span>
             <h2>Konfirmasi Hasil Wawancara</h2>
             <div class="modal-body-content">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <img id="view_gambar" src="" alt="Foto Calon Anggota" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px; margin: auto;">
+                </div>
                 <div class="candidate-info"><strong>Nama</strong> <span id="view_name"></span></div>
                 <div class="candidate-info"><strong>NIM</strong> <span id="view_nim"></span></div>
                 <div class="candidate-info"><strong>Nomor HP</strong> <span id="view_hp"></span></div>
@@ -127,6 +140,16 @@ document.addEventListener('DOMContentLoaded', function() {
     page.querySelectorAll('.btn-lihat').forEach(btn => {
         btn.addEventListener('click', () => {
             const data = JSON.parse(btn.dataset.candidate);
+
+            const imageView = page.querySelector('#view_gambar');
+            if (data.gambar) {
+                imageView.src = `{{ asset('storage') }}/${data.gambar}`;
+                imageView.style.display = 'block';
+            } else {
+                imageView.src = '';
+                imageView.style.display = 'none';
+            }
+
             page.querySelector('#view_name').textContent = data.name;
             page.querySelector('#view_nim').textContent = data.nim;
             page.querySelector('#view_hp').textContent = data.hp;

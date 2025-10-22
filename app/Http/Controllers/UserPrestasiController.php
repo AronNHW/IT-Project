@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Prestasi;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class UserPrestasiController extends Controller
 {
@@ -29,19 +30,29 @@ class UserPrestasiController extends Controller
             $query->where('keterangan', $request->keterangan);
         }
 
-        // Sort
-        $sortBy = $request->get('sort_by', 'waktu_penyelenggaraan');
-        $sortDirection = $request->get('sort_direction', 'desc');
-        if (in_array($sortBy, ['nama_mahasiswa', 'waktu_penyelenggaraan', 'tingkat_kegiatan', 'keterangan']) && in_array($sortDirection, ['asc', 'desc'])) {
-            $query->orderBy($sortBy, $sortDirection);
-        }
+        // Get all matching results
+        $allPrestasis = $query->get();
 
-        $prestasis = $query->paginate(10)->withQueryString();
+        // Sort by SAW score
+        $sortedPrestasis = $allPrestasis->sortByDesc('total_skor');
+
+        // Manual Pagination
+        $page = $request->get('page', 1);
+        $perPage = 10;
+        $offset = ($page * $perPage) - $perPage;
+
+        $prestasis = new LengthAwarePaginator(
+            $sortedPrestasis->slice($offset, $perPage),
+            $sortedPrestasis->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
 
         // Data for filters
         $tingkat_kegiatans = ['Internal (Kampus)', 'Kabupaten/Kota', 'Provinsi', 'Nasional', 'Internasional'];
         $keterangans = ['Akademik', 'Non-Akademik'];
 
-        return view('user.prestasi.index', compact('prestasis', 'tingkat_kegiatans', 'keterangans'));
+        return view('user.prestasi', compact('prestasis', 'tingkat_kegiatans', 'keterangans'));
     }
 }

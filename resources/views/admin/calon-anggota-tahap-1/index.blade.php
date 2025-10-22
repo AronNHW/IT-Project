@@ -128,6 +128,7 @@
         <table class="table data-table">
             <thead>
                 <tr>
+                    <th>Foto</th>
                     <th>Nama Lengkap</th>
                     <th>NIM</th>
                     <th>Nomor HP</th>
@@ -139,6 +140,15 @@
             <tbody>
                 @forelse ($candidates as $candidate)
                     <tr>
+                        <td>
+                            @if($candidate->gambar)
+                                <img src="{{ asset('storage/' . $candidate->gambar) }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                            @else
+                                <div style="width: 50px; height: 50px; background-color: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                    N/A
+                                </div>
+                            @endif
+                        </td>
                         <td>{{ $candidate->name }}</td>
                         <td>{{ $candidate->nim ?? 'N/A' }}</td>
                         <td>{{ $candidate->hp ?? 'N/A' }}</td>
@@ -153,13 +163,15 @@
                                 {{ $statuses[$candidate->status] ?? $candidate->status }}
                             </span>
                         </td>
-                        <td class="action-btns">
-                            <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}' data-divisi='{{ $candidate->divisi->nama_divisi ?? "N/A" }}' data-status='{{ $statuses[$candidate->status] ?? $candidate->status }}'>Lihat</button>
+                        <td>
+                            <div class="action-btns">
+                                <button type="button" class="btn-lihat" data-candidate='{{ json_encode($candidate) }}' data-divisi='{{ $candidate->divisi->nama_divisi ?? "N/A" }}' data-status='{{ $statuses[$candidate->status] ?? $candidate->status }}'>Lihat</button>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr class="empty-row">
-                        <td colspan="6" class="text-center">Tidak ada data calon anggota tahap 1.</td>
+                        <td colspan="7" class="text-center">Tidak ada data calon anggota tahap 1.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -176,6 +188,9 @@
             <span class="custom-modal-close">&times;</span>
             <h2>Detail Calon Anggota Tahap 1</h2>
             <div class="modal-body-content">
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <img id="view_gambar" src="" alt="Foto Calon Anggota" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px; margin: auto;">
+                </div>
                 <div class="candidate-info"><strong>Nama</strong> <span id="view_name"></span></div>
                 <div class="candidate-info"><strong>NIM</strong> <span id="view_nim"></span></div>
                 <div class="candidate-info"><strong>Nomor HP</strong> <span id="view_hp"></span></div>
@@ -184,18 +199,7 @@
                 <div class="candidate-info"><strong>Status</strong> <span id="view_status"></span></div>
             </div>
             <div class="modal-footer-buttons">
-                 <button type="button" class="btn btn-danger" id="deleteButtonFromModal">Hapus</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="deleteModal" class="custom-modal">
-        <div class="custom-modal-content" style="max-width: 400px;">
-            <h3 style="text-align: center;">Konfirmasi Hapus</h3>
-            <p style="text-align: center; margin-top: 1rem;">Apakah Anda yakin ingin menghapus data calon anggota ini?</p>
-            <div class="modal-footer-buttons" style="justify-content: center; margin-top: 1.5rem;">
-                <button type="button" class="btn btn-secondary" id="cancelDelete">Batal</button>
-                <form id="confirmDeleteForm" method="POST" action="">
+                <form id="deleteFormInModal" method="POST" action="">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Hapus</button>
@@ -214,8 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!page) return;
 
     const viewModal = page.querySelector('#viewModal');
-    const deleteModal = page.querySelector('#deleteModal');
-    const modals = [viewModal, deleteModal];
+    const modals = [viewModal];
     let currentCandidateId = null;
 
     // Open View Modal
@@ -223,6 +226,16 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', () => {
             const data = JSON.parse(btn.dataset.candidate);
             currentCandidateId = data.id;
+
+            const imageView = page.querySelector('#view_gambar');
+            if (data.gambar) {
+                imageView.src = `{{ asset('storage') }}/${data.gambar}`;
+                imageView.style.display = 'block';
+            } else {
+                imageView.src = '';
+                imageView.style.display = 'none';
+            }
+
             page.querySelector('#view_name').textContent = data.name;
             page.querySelector('#view_nim').textContent = data.nim;
             page.querySelector('#view_hp').textContent = data.hp;
@@ -230,32 +243,20 @@ document.addEventListener('DOMContentLoaded', function() {
             page.querySelector('#view_alasan_bergabung').textContent = data.alasan;
             page.querySelector('#view_status').textContent = btn.dataset.status;
 
+            const deleteForm = document.getElementById('deleteFormInModal');
+            if (deleteForm) {
+                const action = "{{ route('admin.calon-anggota.destroy', ':id') }}".replace(':id', currentCandidateId);
+                deleteForm.action = action;
+            }
+
             viewModal.style.display = 'block';
         });
     });
-
-    // Open Delete Modal from View Modal
-    const deleteButtonFromModal = page.querySelector('#deleteButtonFromModal');
-    if(deleteButtonFromModal) {
-        deleteButtonFromModal.addEventListener('click', () => {
-            if (currentCandidateId) {
-                const form = document.getElementById('confirmDeleteForm');
-                const action = "{{ route('admin.calon-anggota.destroy', ':id') }}".replace(':id', currentCandidateId);
-                form.action = action;
-                viewModal.style.display = 'none';
-                deleteModal.style.display = 'block';
-            }
-        });
-    }
 
     // Close Modal Logic
     page.querySelectorAll('.custom-modal-close').forEach(btn => {
         btn.addEventListener('click', () => modals.forEach(m => m.style.display = 'none'));
     });
-    const cancelDeleteBtn = page.querySelector('#cancelDelete');
-    if(cancelDeleteBtn) {
-        cancelDeleteBtn.addEventListener('click', () => deleteModal.style.display = 'none');
-    }
 
     window.addEventListener('click', (event) => {
         modals.forEach(m => {

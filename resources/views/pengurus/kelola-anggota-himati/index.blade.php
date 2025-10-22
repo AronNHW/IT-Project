@@ -52,6 +52,7 @@
         <table class="data-table">
             <thead>
                 <tr>
+                    <th>Foto</th>
                     <th>Nama Lengkap</th>
                     <th>NIM</th>
                     <th>Nomor HP</th>
@@ -63,24 +64,35 @@
             <tbody>
                 @forelse ($members as $member)
                     <tr>
+                        <td>
+                            @if($member->gambar)
+                                <img src="{{ asset('storage/' . $member->gambar) }}" alt="Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                            @else
+                                <div style="width: 50px; height: 50px; background-color: #e9ecef; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6c757d;">
+                                    N/A
+                                </div>
+                            @endif
+                        </td>
                         <td>{{ $member->name }}</td>
                         <td>{{ $member->nim ?? 'N/A' }}</td>
                         <td>{{ $member->hp ?? 'N/A' }}</td>
                         <td>{{ $member->divisi->nama_divisi ?? 'N/A' }}</td>
                         <td>{{ $member->updated_at->translatedFormat('d F Y') }}</td>
-                        <td class="action-btns">
-                            <button type="button" class="btn btn-blue view-btn" data-member='{{ json_encode($member) }}'>Lihat</button>
-                            <button type="button" class="btn btn-yellow edit-btn" data-member='{{ json_encode($member) }}' data-update-url="{{ route('pengurus.anggota.update', $member->id) }}">Edit</button>
-                            <button type="button" class="btn btn-red delete-btn" data-id="{{ $member->id }}">Hapus</button>
-                            <form id="delete-form-{{ $member->id }}" action="{{ route('pengurus.anggota.destroy', $member->id) }}" method="POST" style="display: none;">
-                                @csrf
-                                @method('DELETE')
-                            </form>
+                        <td>
+                            <div class="action-btns">
+                                <button type="button" class="btn btn-blue view-btn" data-member='{{ json_encode($member) }}'>Lihat</button>
+                                <button type="button" class="btn btn-yellow edit-btn" data-member='{{ json_encode($member) }}' data-update-url="{{ route('pengurus.anggota.update', $member->id) }}">Edit</button>
+                                <button type="button" class="btn btn-red delete-btn" data-id="{{ $member->id }}">Hapus</button>
+                                <form id="delete-form-{{ $member->id }}" action="{{ route('pengurus.anggota.destroy', $member->id) }}" method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 3rem;">Belum ada anggota aktif.</td>
+                        <td colspan="7" style="text-align: center; padding: 3rem;">Belum ada anggota aktif.</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -98,6 +110,9 @@
         <span class="custom-modal-close view-close">&times;</span>
         <h2>Detail Anggota</h2>
         <div class="modal-body-content" style="padding-top: 20px;">
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <img id="view_gambar" src="" alt="Foto Anggota" style="max-width: 200px; max-height: 200px; object-fit: cover; border-radius: 8px; margin: auto;">
+            </div>
             <div class="candidate-info"><strong>Nama</strong> <span id="view_name"></span></div>
             <div class="candidate-info"><strong>NIM</strong> <span id="view_nim"></span></div>
             <div class="candidate-info"><strong>Nomor HP</strong> <span id="view_hp"></span></div>
@@ -170,6 +185,16 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.view-btn').forEach(button => {
         button.addEventListener('click', function () {
             const member = JSON.parse(this.dataset.member);
+
+            const imageView = document.getElementById('view_gambar');
+            if (member.gambar) {
+                imageView.src = `{{ asset('storage') }}/${member.gambar}`;
+                imageView.style.display = 'block';
+            } else {
+                imageView.src = '';
+                imageView.style.display = 'none';
+            }
+
             document.getElementById('view_name').textContent = member.name;
             document.getElementById('view_nim').textContent = member.nim;
             document.getElementById('view_hp').textContent = member.hp;
